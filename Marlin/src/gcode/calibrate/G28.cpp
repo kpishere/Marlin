@@ -124,6 +124,10 @@
     // Disallow Z homing if X or Y homing is needed
     if (homing_needed_error(_BV(X_AXIS) | _BV(Y_AXIS))) return;
 
+    // find true endstop postion
+    homeaxis(X_AXIS);
+    homeaxis(Y_AXIS);
+
     sync_plan_position();
 
     /**
