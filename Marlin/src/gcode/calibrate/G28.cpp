@@ -123,10 +123,7 @@
 
     // Ensure X and Y homed before Z homing
     homeaxis(X_AXIS);
-    
-    if (homing_needed_error(_BV(Y_AXIS))) {
-      homeaxis(Y_AXIS);
-    }
+    homeaxis(Y_AXIS);
 
     sync_plan_position();
 
