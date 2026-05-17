@@ -959,7 +959,8 @@
   #include "rp2040/pins_RASPBERRY_PI_PICO.h"        // RP2040                               env:RP2040
 #elif MB(BTT_SKR_PICO)
   #include "rp2040/pins_BTT_SKR_Pico.h"             // RP2040                               env:SKR_Pico env:SKR_Pico_UART
-
+#elif MB(RP2040_PICKSIX)
+  #include "rp2040/pins_RP2040_PickSix.h"           // RP2040                               env:RP2040_PickSix
 //
 // Custom board (with custom PIO env)
 //
