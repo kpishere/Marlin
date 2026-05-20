@@ -36,6 +36,18 @@
 // ------------------------
 
 void FastIO_init(); // Must be called before using fast io macros
+
+#if MOTHERBOARD == BOARD_RP2040_PICKSIX
+  void exPinMode(PinName pin, PinMode mode);
+  void exPinMode(pin_size_t pin, PinMode mode); 
+  
+  void exDigitalWrite(PinName pin, PinStatus val);
+  void exDigitalWrite(pin_size_t pin, PinStatus val);
+
+  PinStatus exDigitalRead(PinName pin);
+  PinStatus exDigitalRead(pin_size_t pin);
+#endif
+
 #define FASTIO_INIT() FastIO_init()
 
 // ------------------------
@@ -48,15 +60,32 @@ void FastIO_init(); // Must be called before using fast io macros
   #define PWM OUTPUT
 #endif
 
-#define _WRITE(IO, V) digitalWrite((IO), (V))
+#if MOTHERBOARD == BOARD_RP2040_PICKSIX
+  #define _WRITE(IO, V) exDigitalWrite((IO), (PinStatus)(V))
+#else
+  #define _WRITE(IO, V) digitalWrite((IO), (V))
+#endif
 
-#define _READ(IO)               digitalRead(IO)
-#define _TOGGLE(IO)             digitalWrite(IO, !digitalRead(IO))
+
+#if MOTHERBOARD == BOARD_RP2040_PICKSIX
+  #define _READ(IO)               exDigitalRead(IO)
+  #define _TOGGLE(IO)             exDigitalWrite(IO, (PinStatus)!exDigitalRead(IO))
+#else
+  #define _READ(IO)               digitalRead(IO)
+  #define _TOGGLE(IO)             digitalWrite(IO, !digitalRead(IO))
+#endif
 
 #define _GET_MODE(IO)
-#define _SET_MODE(IO,M)         pinMode(IO, M)
-#define _SET_OUTPUT(IO)         pinMode(IO, OUTPUT)                               //!< Output Push Pull Mode & GPIO_NOPULL
-#define _SET_OUTPUT_OD(IO)      pinMode(IO, OUTPUT_OPEN_DRAIN)
+
+#if MOTHERBOARD == BOARD_RP2040_PICKSIX
+  #define _SET_MODE(IO,M)         exPinMode(IO, M)
+  #define _SET_OUTPUT(IO)         exPinMode(IO, OUTPUT)                               //!< Output Push Pull Mode & GPIO_NOPULL
+  #define _SET_OUTPUT_OD(IO)      exPinMode(IO, OUTPUT_OPEN_DRAIN)
+#else
+  #define _SET_MODE(IO,M)         pinMode(IO, M)
+  #define _SET_OUTPUT(IO)         pinMode(IO, OUTPUT)                               //!< Output Push Pull Mode & GPIO_NOPULL
+  #define _SET_OUTPUT_OD(IO)      pinMode(IO, OUTPUT_OPEN_DRAIN)
+#endif
 
 #define WRITE(IO,V)             _WRITE(IO,V)
 #define READ(IO)                _READ(IO)
@@ -78,8 +107,13 @@ void FastIO_init(); // Must be called before using fast io macros
 #define NO_COMPILE_TIME_PWM
 
 // digitalRead/Write wrappers
-#define extDigitalRead(IO)    digitalRead(IO)
-#define extDigitalWrite(IO,V) digitalWrite(IO,V)
+#if MOTHERBOARD == BOARD_RP2040_PICKSIX
+  #define extDigitalRead(IO)    exDigitalRead(IO)
+  #define extDigitalWrite(IO,V) exDigitalWrite(IO,(PinStatus)V)
+#else
+  #define extDigitalRead(IO)    digitalRead(IO)
+  #define extDigitalWrite(IO,V) digitalWrite(IO,V)
+#endif
 
 #undef I2C_SDA
 #define I2C_SDA_PIN PIN_WIRE_SDA

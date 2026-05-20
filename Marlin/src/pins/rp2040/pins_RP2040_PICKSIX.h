@@ -65,12 +65,30 @@
 //////////////////////////////////////////////////////////////
 
 //
-// Virtual pins of ads1x15 Chip on I2C bus
-//
-#define AIN0             46
-#define AIN1             47
-#define AIN2             48
-#define AIN3             49
+// Pins defined in 
+//  .platformio/packages/framework-arduino-mbed/variants/RASPBERRY_PI_PICO/pins_arduino.h
+//   -- don't want these active
+// 
+// Serial
+#ifdef PIN_SERIAL_TX
+  #undef PIN_SERIAL_TX 
+#endif
+#ifdef PIN_SERIAL_RX
+  #undef PIN_SERIAL_RX  
+#endif
+// SPI
+#ifdef PIN_SPI_MISO
+  #define PIN_SPI_MISO  
+#endif
+#ifdef PIN_SPI_MOSI
+ #define PIN_SPI_MOSI  
+#endif
+#ifdef PIN_SPI_SCK
+  #define PIN_SPI_SCK   
+#endif
+#ifdef PIN_SPI_SS
+  #define PIN_SPI_SS    
+#endif
 
 //
 // Card Busses
@@ -89,18 +107,46 @@
 #define SERIAL0_RX_PIN             13 // name used required by RP2040/MarlinSerial.cpp
 #define GPIO_SPI_CS12_LCD          16
 
+// Used by librarie's Wire instance in RP2040_PickSix/lib3da/Wire/Wire.cpp
+#define PIN_WIRE_SDA        GPIO_I2C_SDA1
+#define PIN_WIRE_SCL        GPIO_I2C_SCL1
+
 //
 // GPIO expander
 //
-#define XRA1403_SPI_BUS            0  // SPI bus number if you have multiple
 #define XRA1403_CS_PIN             GPIO_SPI_CS10
-#define XRA1403_SPI_FREQ           1000000 // SPI frequency (1MHz is usually safe)
+
+//
+// Virtual pins of ads1x15 Chip on I2C bus
+//
+#define ADS1015_I2C_SDA1 GPIO_I2C_SDA1
+#define ADS1015_I2C_SCL1 GPIO_I2C_SCL1
+#define ADS1015_I2C_ADDR 0x48   // ADDR pin to GND   
+// Re-define these pins to virtual pins - originaly defined at 
+//  .platformio/packages/framework-arduino-mbed/variants/RASPBERRY_PI_PICO/pins_arduino.h
+// HAL switches their use when ADS1015_* are defined
+#ifdef PIN_A0 
+  #undef PIN_A0
+#endif    
+#define PIN_A0          46
+#ifdef PIN_A1 
+  #undef PIN_A1
+#endif    
+#define PIN_A1          47
+#ifdef PIN_A2 
+  #undef PIN_A2
+#endif    
+#define PIN_A2          48
+#ifdef PIN_A3 
+  #undef PIN_A3
+#endif    
+#define PIN_A3          49
 
 //
 // Steppers
 //
-#define HW_LOW                 99 // Hard wired low
-#define NC                     99 // not connected
+#define HW_LOW                 50 // Hard wired low
+#define NC                     50 // not connected
 
 #define Y_STOP_PIN                 GPIO_DIAG1
 #define Y_STEP_PIN                 10
@@ -160,10 +206,10 @@
 //
 // Temperature Sensors
 //
-#define TEMP_0_PIN                 AIN0  // Analog Input w. ADS1X1X in I2C bus
-#define TEMP_BED_PIN               AIN1  // Analog Input w. ADS1X1X in I2C bus
-#define TEMP_1_PIN                 AIN2  // Analog Input w. ADS1X1X in I2C bus
-#define TEMP_2_PIN                 AIN3  // Analog Input w. ADS1X1X in I2C bus
+#define TEMP_0_PIN                 PIN_A0  // Analog Input w. ADS1X1X in I2C bus
+#define TEMP_BED_PIN               PIN_A1  // Analog Input w. ADS1X1X in I2C bus
+#define TEMP_1_PIN                 PIN_A2  // Analog Input w. ADS1X1X in I2C bus
+#define TEMP_2_PIN                 PIN_A3  // Analog Input w. ADS1X1X in I2C bus
 
 #define TEMP_CHAMBER_PIN           TEMP_1_PIN
 
@@ -457,9 +503,6 @@
         #define KILL_PIN                      41
       #endif
     #endif
-
-    // CUSTOM SIMULATOR INPUTS
-    #define BTN_BACK                          70
 
   #endif // IS_NEWPANEL
 

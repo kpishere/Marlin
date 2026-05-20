@@ -42,6 +42,12 @@ extern "C" {
   #include "msc_sd.h"
 #endif
 
+#if defined(ADS1015_I2C_SDA1) && defined(ADS1015_I2C_SCL1)
+  #include <Wire.h>
+  #include <Adafruit_ADS1X15.h>
+  Adafruit_ADS1015 ads;  // Use ads1015 for 12-bit version
+#endif
+
 // ------------------------
 // Public Variables
 // ------------------------
@@ -79,25 +85,30 @@ void core1_adc_task() {
     for (uint8_t channel = 0; channel < 5; channel++) {
       if (!adc_channels_enabled[channel]) continue;
 
-      // Enable temperature sensor if reading channel 4
-      if (channel == 4) {
-        adc_set_temp_sensor_enabled(true);
-      }
+      #if defined(ADS1015_I2C_SDA1) && defined(ADS1015_I2C_SCL1)
+        if(channel == 4) continue; // There is only channels 0-3 involved with this device
+        uint16_t reading = ads.readADC_SingleEnded(channel);
+      #else
+        // Enable temperature sensor if reading channel 4
+        if (channel == 4) {
+          adc_set_temp_sensor_enabled(true);
+        }
+        // Select and read the channel
+        adc_select_input(channel);
+        busy_wait_us(100); // Settling delay
+        adc_fifo_drain();
+        adc_run(true);
 
-      // Select and read the channel
-      adc_select_input(channel);
-      busy_wait_us(100); // Settling delay
-      adc_fifo_drain();
-      adc_run(true);
+        // Wait for conversion with timeout
+        uint32_t timeout = 10000;
+        while (adc_fifo_is_empty() && timeout--) {
+          busy_wait_us(1);
+        }
 
-      // Wait for conversion with timeout
-      uint32_t timeout = 10000;
-      while (adc_fifo_is_empty() && timeout--) {
-        busy_wait_us(1);
-      }
+        adc_run(false);
+        uint16_t reading = adc_fifo_is_empty() ? 0 : adc_fifo_get();
+      #endif
 
-      adc_run(false);
-      uint16_t reading = adc_fifo_is_empty() ? 0 : adc_fifo_get();
 
       // Accumulate readings for oversampling
       adc_accumulators[channel] += reading;
@@ -110,10 +121,14 @@ void core1_adc_task() {
         adc_counts[channel] = 0;
       }
 
-      // Disable temp sensor after reading to save power
-      if (channel == 4) {
-        adc_set_temp_sensor_enabled(false);
-      }
+      #if defined(ADS1015_I2C_SDA1) && defined(ADS1015_I2C_SCL1)
+        // nothing to do here
+      #else
+        // Disable temp sensor after reading to save power
+        if (channel == 4) {
+          adc_set_temp_sensor_enabled(false);
+        }
+      #endif
     }
 
     // Core 1 just provides ADC readings - don't trigger temperature updates from here
@@ -185,6 +200,11 @@ void MarlinHAL::init() {
     delay_ms(1000);                                     // Give OS time to notice
     WRITE(USB_CONNECT_PIN, USB_CONNECT_INVERTING);
   #endif
+
+  // Init I2C and ADS1X15
+  #if defined(ADS1015_I2C_SDA1) && defined(ADS1015_I2C_SCL1)
+  Wire.begin();
+  #endif // ADS1X15
 }
 
 uint8_t MarlinHAL::get_reset_source() {
@@ -253,6 +273,13 @@ void MarlinHAL::adc_init() {
   analogReadResolution(HAL_ADC_RESOLUTION);
   ::adc_init();
   adc_fifo_setup(true, false, 1, false, false);
+
+  // Init I2C and ADS1X15
+  #if defined(ADS1015_I2C_SDA1) && defined(ADS1015_I2C_SCL1)
+  ads.begin(ADS1015_I2C_ADDR, &Wire);
+  ads.setGain(GAIN_ONE); // Set gain to +/-4.096V 
+  #endif // ADS1X15
+
   // Launch Core 1 for continuous ADC reading
   multicore_launch_core1(core1_adc_task);
   adc_has_result = true; // Results are always available with continuous sampling
@@ -260,7 +287,11 @@ void MarlinHAL::adc_init() {
 
 void MarlinHAL::adc_enable(const pin_t pin) {
   if (pin >= A0 && pin <= A3) {
-    adc_gpio_init(pin);
+    #if defined(ADS1015_I2C_SDA1) && defined(ADS1015_I2C_SCL1)
+      // Nothing to do, in single shot blocking mode
+    #else
+      adc_gpio_init(pin);
+    #endif
     adc_channels_enabled[pin - A0] = true; // Mark this channel as enabled
   }
   else if (pin == HAL_ADC_MCU_TEMP_DUMMY_PIN) {
