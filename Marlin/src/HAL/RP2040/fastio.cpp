@@ -26,7 +26,6 @@
 #include "../../inc/MarlinConfig.h"
 
 #if MOTHERBOARD == BOARD_RP2040_PICKSIX
-#include <pins_arduino.h>
 #include <pinDefinitions.h>
 #include <SPI.h>
 #include <Adafruit_SPIDevice.h>

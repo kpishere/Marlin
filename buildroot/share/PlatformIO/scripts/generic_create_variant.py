@@ -28,7 +28,8 @@ if pioutil.is_pio_build():
     if len(platform_packages) == 0:
         framewords = {
             "Ststm32Platform": "framework-arduinoststm32",
-            "AtmelavrPlatform": "framework-arduino-avr"
+            "AtmelavrPlatform": "framework-arduino-avr",
+            "RaspberrypiPlatform": "framework-arduino-mbed"
         }
         platform_name = framewords[platform.__class__.__name__]
     else:
@@ -56,4 +57,13 @@ if pioutil.is_pio_build():
         variants_dir = here / 'buildroot' / 'share' / 'PlatformIO' / 'variants'
         source_dir = variants_dir / variant
         assert source_dir.is_dir()
-        board.update("build.variants_dir", str(variants_dir))
+        # The mbed-based RP2040 framework hard-codes FRAMEWORK_DIR/variants/<name>
+        # and does not honour build.variants_dir, so copy the variant in directly.
+        if platform.__class__.__name__ == "RaspberrypiPlatform":
+            dest_dir = FRAMEWORK_DIR / 'variants' / variant
+            if dest_dir.exists():
+                shutil.rmtree(dest_dir)
+            shutil.copytree(str(source_dir), str(dest_dir))
+        else:
+            board.update("build.variants_dir", str(variants_dir))
+            

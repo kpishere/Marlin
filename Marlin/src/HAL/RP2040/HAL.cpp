@@ -42,7 +42,7 @@ extern "C" {
   #include "msc_sd.h"
 #endif
 
-#if defined(ADS1015_I2C_SDA1) && defined(ADS1015_I2C_SCL1)
+#if defined(I2C_SDA_PIN) && defined(I2C_SCL_PIN)
   #include <Wire.h>
   #include <Adafruit_ADS1X15.h>
   Adafruit_ADS1015 ads;  // Use ads1015 for 12-bit version
@@ -85,7 +85,7 @@ void core1_adc_task() {
     for (uint8_t channel = 0; channel < 5; channel++) {
       if (!adc_channels_enabled[channel]) continue;
 
-      #if defined(ADS1015_I2C_SDA1) && defined(ADS1015_I2C_SCL1)
+      #if defined(I2C_SDA_PIN) && defined(I2C_SCL_PIN)
         if(channel == 4) continue; // There is only channels 0-3 involved with this device
         uint16_t reading = ads.readADC_SingleEnded(channel);
       #else
@@ -121,7 +121,7 @@ void core1_adc_task() {
         adc_counts[channel] = 0;
       }
 
-      #if defined(ADS1015_I2C_SDA1) && defined(ADS1015_I2C_SCL1)
+      #if defined(I2C_SDA_PIN) && defined(I2C_SCL_PIN)
         // nothing to do here
       #else
         // Disable temp sensor after reading to save power
@@ -202,7 +202,7 @@ void MarlinHAL::init() {
   #endif
 
   // Init I2C and ADS1X15
-  #if defined(ADS1015_I2C_SDA1) && defined(ADS1015_I2C_SCL1)
+  #if defined(I2C_SDA_PIN) && defined(I2C_SCL_PIN)
   Wire.begin();
   #endif // ADS1X15
 }
@@ -275,7 +275,7 @@ void MarlinHAL::adc_init() {
   adc_fifo_setup(true, false, 1, false, false);
 
   // Init I2C and ADS1X15
-  #if defined(ADS1015_I2C_SDA1) && defined(ADS1015_I2C_SCL1)
+  #if defined(I2C_SDA_PIN) && defined(I2C_SCL_PIN)
   ads.begin(ADS1015_I2C_ADDR, &Wire);
   ads.setGain(GAIN_ONE); // Set gain to +/-4.096V 
   #endif // ADS1X15
@@ -287,7 +287,7 @@ void MarlinHAL::adc_init() {
 
 void MarlinHAL::adc_enable(const pin_t pin) {
   if (pin >= A0 && pin <= A3) {
-    #if defined(ADS1015_I2C_SDA1) && defined(ADS1015_I2C_SCL1)
+    #if defined(I2C_SDA_PIN) && defined(I2C_SCL_PIN)
       // Nothing to do, in single shot blocking mode
     #else
       adc_gpio_init(pin);
