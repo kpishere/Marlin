@@ -2,14 +2,15 @@
 #include "pinDefinitions.h"
 
 AnalogPinDescription g_AAnalogPinDescription[] = {
-  { p26,        NULL },    // A0
-  { p27,        NULL },    // A1
-  { p28,        NULL },    // A2
-  { p29,        NULL },    // A3
+// Four ADC channel provided via i2c bus on virtual pins p46-p49
+  { p46,        NULL },    // A0
+  { p47,        NULL },    // A1
+  { p48,        NULL },    // A2
+  { p49,        NULL },    // A3
 };
 
 PinDescription g_APinDescription[] = {
-  // D0 - D29
+  // D0 - D29, D30-D45 are extra GPIO via SPI bus
   { p0,  NULL, NULL, NULL },
   { p1,  NULL, NULL, NULL },
   { p2,  NULL, NULL, NULL },
@@ -40,6 +41,26 @@ PinDescription g_APinDescription[] = {
   { p27, NULL, NULL, NULL },
   { p28, NULL, NULL, NULL },
   { p29, NULL, NULL, NULL },
+  { p30, NULL, NULL, NULL },
+  { p31, NULL, NULL, NULL },
+  { p32, NULL, NULL, NULL },
+  { p33, NULL, NULL, NULL },
+  { p34, NULL, NULL, NULL },
+  { p35, NULL, NULL, NULL },
+  { p36, NULL, NULL, NULL },
+  { p37, NULL, NULL, NULL },
+  { p38, NULL, NULL, NULL },
+  { p39, NULL, NULL, NULL },
+  { p40, NULL, NULL, NULL },
+  { p41, NULL, NULL, NULL },
+  { p42, NULL, NULL, NULL },
+  { p43, NULL, NULL, NULL },
+  { p44, NULL, NULL, NULL },
+  { p45, NULL, NULL, NULL },
+  { p46, NULL, NULL, NULL },
+  { p47, NULL, NULL, NULL },
+  { p48, NULL, NULL, NULL },
+  { p49, NULL, NULL, NULL },
 };
 
 extern "C" {

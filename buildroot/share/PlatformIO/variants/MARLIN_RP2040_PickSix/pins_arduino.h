@@ -23,12 +23,12 @@ extern PinName digitalPinToPinName(pin_size_t P);
 #define PIN_LED     (25u)
 #define LED_BUILTIN PIN_LED
 
-// Analog pins
+// Analog pins - changed to virtulal pins of external ADC on i2c bus
 // -----------
-#define PIN_A0 (26u)
-#define PIN_A1 (27u)
-#define PIN_A2 (28u)
-#define PIN_A3 (29u)
+#define PIN_A0 (46u)
+#define PIN_A1 (47u)
+#define PIN_A2 (48u)
+#define PIN_A3 (49u)
 
 static const uint8_t A0  = PIN_A0;
 static const uint8_t A1  = PIN_A1;
@@ -38,23 +38,23 @@ static const uint8_t A3  = PIN_A3;
 #define ADC_RESOLUTION 12
 
 // Serial
-#define PIN_SERIAL_TX (0ul)
-#define PIN_SERIAL_RX (1ul)
+#define PIN_SERIAL_TX (8ul)  // Defined in pins_RP2040_PICKSIX.h
+#define PIN_SERIAL_RX (9ul)  // Defined in pins_RP2040_PICKSIX.h
 
 // SPI
-#define PIN_SPI_MISO  (16u)
-#define PIN_SPI_MOSI  (19u)
-#define PIN_SPI_SCK   (18u)
-#define PIN_SPI_SS    (17u)
+#define PIN_SPI_MISO  (4u)
+#define PIN_SPI_MOSI  (3u)
+#define PIN_SPI_SCK   (2u)
+//#define PIN_SPI_SS    (17u)
 
-static const uint8_t SS   = PIN_SPI_SS;   // SPI Slave SS not used. Set here only for reference.
-static const uint8_t MOSI = PIN_SPI_MOSI;
-static const uint8_t MISO = PIN_SPI_MISO;
-static const uint8_t SCK  = PIN_SPI_SCK;
+//static const uint8_t SS   = PIN_SPI_SS;   // SPI Slave SS not used. Set here only for reference.
+//static const uint8_t MOSI = PIN_SPI_MOSI;
+//static const uint8_t MISO = PIN_SPI_MISO;
+//static const uint8_t SCK  = PIN_SPI_SCK;
 
 // Wire
-#define PIN_WIRE_SDA        (4u)
-#define PIN_WIRE_SCL        (5u)
+#define PIN_WIRE_SDA        (6u)
+#define PIN_WIRE_SCL        (7u)
 
 #define SERIAL_HOWMANY		1
 #define SERIAL1_TX			(digitalPinToPinName(PIN_SERIAL_TX))

@@ -95,21 +95,17 @@
 //
 #define GPIO_INT_CS10              0
 #define GPIO_SPI_CS11              1
-#define GPIO_SPI_SCLK1             2
-#define GPIO_SPI_MOSI1             3
-#define GPIO_SPI_MISO1             4
+#define GPIO_SPI_SCLK1             2 // These are defined in pins_arduino.h
+#define GPIO_SPI_MOSI1             3 // These are defined in pins_arduino.h
+#define GPIO_SPI_MISO1             4 // These are defined in pins_arduino.h
 #define GPIO_SPI_CS10              5
-#define GPIO_I2C_SDA1              6
-#define GPIO_I2C_SCL1              7
-#define SERIAL1_TX_PIN             8  // name used required by RP2040/MarlinSerial.cpp
-#define SERIAL1_RX_PIN             9  // name used required by RP2040/MarlinSerial.cpp
-#define SERIAL0_TX_PIN             12 // name used required by RP2040/MarlinSerial.cpp
-#define SERIAL0_RX_PIN             13 // name used required by RP2040/MarlinSerial.cpp
+//#define GPIO_I2C_SDA1            6 // These are defined in pins_arduino.h
+//#define GPIO_I2C_SCL1            7 // These are defined in pins_arduino.h
+#define SERIAL1_TX_PIN             8  // These are defined in pins_arduino.h
+#define SERIAL1_RX_PIN             9  // These are defined in pins_arduino.h
+#define SERIAL0_TX_PIN             12 // These are defined in pins_arduino.h
+#define SERIAL0_RX_PIN             13 // These are defined in pins_arduino.h
 #define GPIO_SPI_CS12_LCD          16
-
-// Used by librarie's Wire instance in RP2040_PickSix/lib3da/Wire/Wire.cpp
-#define PIN_WIRE_SDA        GPIO_I2C_SDA1
-#define PIN_WIRE_SCL        GPIO_I2C_SCL1
 
 //
 // GPIO expander
@@ -119,8 +115,6 @@
 //
 // Virtual pins of ads1x15 Chip on I2C bus
 //
-#define ADS1015_I2C_SDA1 GPIO_I2C_SDA1
-#define ADS1015_I2C_SCL1 GPIO_I2C_SCL1
 #define ADS1015_I2C_ADDR 0x48   // ADDR pin to GND   
 // Re-define these pins to virtual pins - originaly defined at 
 //  .platformio/packages/framework-arduino-mbed/variants/RASPBERRY_PI_PICO/pins_arduino.h

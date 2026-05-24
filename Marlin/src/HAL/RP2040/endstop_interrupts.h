@@ -26,8 +26,10 @@
 // One ISR for all EXT-Interrupts
 void endstop_ISR() { endstops.update(); }
 
+void doNothing() {}
+
 void setup_endstop_interrupts() {
-  #define _ATTACH(P) attachInterrupt(digitalPinToInterrupt(P), endstop_ISR, CHANGE)
+  #define _ATTACH(P) ( ((P) < NUM_DIGITAL_PINS ? attachInterrupt(digitalPinToInterrupt(P), endstop_ISR, CHANGE) : doNothing() ) )
   TERN_(USE_X_MAX, _ATTACH(X_MAX_PIN));
   TERN_(USE_X_MIN, _ATTACH(X_MIN_PIN));
   TERN_(USE_Y_MAX, _ATTACH(Y_MAX_PIN));

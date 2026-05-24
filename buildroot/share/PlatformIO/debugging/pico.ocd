@@ -1,0 +1,14 @@
+source [find /interface/jlink.cfg]
+
+transport select swd 
+adapter speed 10000
+
+source [find target/rp2040.cfg]
+
+#######
+# Example commands
+#######
+#
+# Upload and verify
+# 
+# "targets rp2040.core0; program hello_usb.elf verify reset exit"
