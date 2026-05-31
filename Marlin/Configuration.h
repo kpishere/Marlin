@@ -3253,7 +3253,7 @@
 // https://www.aliexpress.com/item/32837222770.html
 //
 #define AZSMZ_12864
-#define U8G_HAL_LINKS
+#define ST7920_DELAY_1 100
 
 //
 // Silvergate GLCD controller
