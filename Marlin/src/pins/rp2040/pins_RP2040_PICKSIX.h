@@ -105,7 +105,7 @@
 #define SERIAL1_RX_PIN             9  // These are defined in pins_arduino.h
 #define SERIAL0_TX_PIN             12 // These are defined in pins_arduino.h
 #define SERIAL0_RX_PIN             13 // These are defined in pins_arduino.h
-#define GPIO_SPI_CS12_LCD          16
+#define GPIO_SPI_CS12_LCD          16 // These are defined in pins_arduino.h
 
 //
 // GPIO expander
@@ -466,7 +466,7 @@
       #define BTN_EN2                          GPIO_SEN2
       #define BTN_ENC                          GPIO_SERVO_P2
       #if !defined(SDCARD_CONNECTION) && DISABLED(NO_LCD_SDCARD)
-        #define SDCARD_CONNECTION                LCD
+        #define SDCARD_CONNECTION              GPIO_SPI_CS11
       #endif
     #else
 
@@ -502,7 +502,7 @@
 
 #endif // HAS_WIRED_LCD
 
-#if SD_CONNECTION_IS(LCD)
+#if SD_CONNECTION_IS(GPIO_SPI_CS11)
   #define SD_SCK_PIN                       GPIO_SPI_SCLK1
   #define SD_MISO_PIN                      GPIO_SPI_MISO1
   #define SD_MOSI_PIN                      GPIO_SPI_MOSI1

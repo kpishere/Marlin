@@ -38,14 +38,16 @@ static const uint8_t A3  = PIN_A3;
 #define ADC_RESOLUTION 12
 
 // Serial
-#define PIN_SERIAL_TX (8ul)  // Defined in pins_RP2040_PICKSIX.h
-#define PIN_SERIAL_RX (9ul)  // Defined in pins_RP2040_PICKSIX.h
+#define PIN_SERIAL_TX (8ul)  // Defined in pins_RP2040_PICKSIX.h Serial1
+#define PIN_SERIAL_RX (9ul)  // Defined in pins_RP2040_PICKSIX.h Serial1
 
 // SPI
-#define PIN_SPI_MISO  (4u)
-#define PIN_SPI_MOSI  (3u)
-#define PIN_SPI_SCK   (2u)
-//#define PIN_SPI_SS    (17u)
+#define PIN_SPI_MISO  (4u)  // Defined in pins_RP2040_PICKSIX.h
+#define PIN_SPI_MOSI  (3u)  // Defined in pins_RP2040_PICKSIX.h
+#define PIN_SPI_SCK   (2u)  // Defined in pins_RP2040_PICKSIX.h
+#define PIN_SPI_SS    (16u) // defined in pins_RP2040_PICKSIX.h as GPIO_SPI_CS12_LCD
+#define DOGLCD_CS     PIN_SPI_SS
+#define DOGLCD_A0     40
 
 //static const uint8_t SS   = PIN_SPI_SS;   // SPI Slave SS not used. Set here only for reference.
 //static const uint8_t MOSI = PIN_SPI_MOSI;
@@ -53,8 +55,8 @@ static const uint8_t A3  = PIN_A3;
 //static const uint8_t SCK  = PIN_SPI_SCK;
 
 // Wire
-#define PIN_WIRE_SDA        (6u)
-#define PIN_WIRE_SCL        (7u)
+#define PIN_WIRE_SDA        (6u)  // Defined in pins_RP2040_PICKSIX.h
+#define PIN_WIRE_SCL        (7u)  // Defined in pins_RP2040_PICKSIX.h
 
 #define SERIAL_HOWMANY		1
 #define SERIAL1_TX			(digitalPinToPinName(PIN_SERIAL_TX))
@@ -73,6 +75,7 @@ void _ontouch1200bps_();
 #define SPI_MISO		(digitalPinToPinName(PIN_SPI_MISO))
 #define SPI_MOSI		(digitalPinToPinName(PIN_SPI_MOSI))
 #define SPI_SCK			(digitalPinToPinName(PIN_SPI_SCK))
+#define SPI_SS			(digitalPinToPinName(PIN_SPI_SS))
 
 #define WIRE_HOWMANY	(1)
 #define I2C_SDA			(digitalPinToPinName(PIN_WIRE_SDA))
