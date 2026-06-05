@@ -36,8 +36,8 @@
  *   S<pos>  Next file read position to set
  */
 void GcodeSuite::M26() {
-  if (card.isMounted() && parser.seenval('S'))
-    card.setIndex(parser.value_long());
+  if (card().isMounted() && parser.seenval('S'))
+    card().setIndex(parser.value_long());
 }
 
 #endif // HAS_MEDIA

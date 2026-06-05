@@ -38,16 +38,16 @@
  *    M32 S60 !PATH/TO/FILE.GCO#  ; Start FILE.GCO at byte 60
  */
 void GcodeSuite::M32() {
-  if (card.isStillPrinting()) planner.synchronize();
+  if (card().isStillPrinting()) planner.synchronize();
 
-  if (card.isMounted()) {
+  if (card().isMounted()) {
     const uint8_t call_procedure = parser.boolval('P');
 
-    card.openFileRead(parser.string_arg, call_procedure);
+    card().openFileRead(parser.string_arg, call_procedure);
 
-    if (parser.seenval('S')) card.setIndex(parser.value_long());
+    if (parser.seenval('S')) card().setIndex(parser.value_long());
 
-    card.startOrResumeFilePrinting();
+    card().startOrResumeFilePrinting();
 
     // Procedure calls count as normal print time.
     if (!call_procedure) marlin.startOrResumeJob();

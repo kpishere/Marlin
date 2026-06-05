@@ -777,7 +777,7 @@ void MarlinUI::draw_status_screen() {
     //
     // SD Card Symbol
     //
-    if (card.isFileOpen() && PAGE_CONTAINS(42, 51)) {
+    if (card().isFileOpen() && PAGE_CONTAINS(42, 51)) {
       // Upper box
       u8g.drawBox(42, 42, 8, 7);     // 42-48 (or 41-47)
       // Right edge

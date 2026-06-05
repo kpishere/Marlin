@@ -292,7 +292,7 @@ MarlinState Marlin::state = MF_INITIALIZING;
 bool Marlin::wait_for_heatup = false;
 
 #if !HAS_MEDIA
-  CardReader card; // Stub instance with "no media" methods
+  CardReader& card(); // Stub instance with "no media" methods
 #endif
 
 PGMSTR(M112_KILL_STR, "M112 Shutdown");
@@ -356,7 +356,7 @@ bool Marlin::printer_busy() {
 /**
  * A Print Job exists when the timer is running or SD is printing
  */
-bool Marlin::printJobOngoing() { return print_job_timer.isRunning() || card.isStillPrinting(); }
+bool Marlin::printJobOngoing() { return print_job_timer.isRunning() || card().isStillPrinting(); }
 
 /**
  * Printing is active when a job is underway but not paused
@@ -367,7 +367,7 @@ bool Marlin::printingIsActive() { return !did_pause_print && printJobOngoing(); 
  * Printing is paused according to SD or host indicators
  */
 bool Marlin::printingIsPaused() {
-  return did_pause_print || print_job_timer.isPaused() || card.isPaused();
+  return did_pause_print || print_job_timer.isPaused() || card().isPaused();
 }
 
 void Marlin::startOrResumeJob() {
@@ -384,8 +384,8 @@ void Marlin::startOrResumeJob() {
 #if HAS_MEDIA
 
   inline void abortSDPrinting() {
-    IF_DISABLED(NO_SD_AUTOSTART, card.autofile_cancel());
-    card.abortFilePrintNow(TERN_(SD_RESORT, true));
+    IF_DISABLED(NO_SD_AUTOSTART, card().autofile_cancel());
+    card().abortFilePrintNow(TERN_(SD_RESORT, true));
 
     queue.clear();
     motion.quickstop_stepper();
@@ -532,7 +532,7 @@ void Marlin::manage_inactivity(const bool no_stepper_sleep/*=false*/) {
     // Handle a standalone HOME button
     constexpr millis_t HOME_DEBOUNCE_DELAY = 1000UL;
     static millis_t next_home_key_ms; // = 0
-    if (!card.isStillPrinting() && !READ(HOME_PIN)) { // HOME_PIN goes LOW when pressed
+    if (!card().isStillPrinting() && !READ(HOME_PIN)) { // HOME_PIN goes LOW when pressed
       if (ELAPSED(ms, next_home_key_ms)) {
         next_home_key_ms = ms + HOME_DEBOUNCE_DELAY;
         LCD_MESSAGE(MSG_AUTO_HOME);
@@ -832,7 +832,7 @@ void Marlin::idle(const bool no_stepper_sleep/*=false*/) {
 
   // Handle Power-Loss Recovery
   #if ENABLED(POWER_LOSS_RECOVERY) && PIN_EXISTS(POWER_LOSS)
-    if (card.isStillPrinting()) recovery.outage();
+    if (card().isStillPrinting()) recovery.outage();
   #endif
 
   // Run StallGuard endstop checks
@@ -842,7 +842,7 @@ void Marlin::idle(const bool no_stepper_sleep/*=false*/) {
   #endif
 
   // Handle SD Card insert / remove
-  TERN_(HAS_MEDIA, card.manage_media());
+  TERN_(HAS_MEDIA, card().manage_media());
 
   // Announce Host Keepalive state (if any)
   TERN_(HOST_KEEPALIVE_FEATURE, gcode.host_keepalive());
@@ -890,7 +890,7 @@ void Marlin::idle(const bool no_stepper_sleep/*=false*/) {
     if (!gcode.autoreport_paused) {
       TERN_(AUTO_REPORT_TEMPERATURES, thermalManager.auto_reporter.tick());
       TERN_(AUTO_REPORT_FANS, fan_check.auto_reporter.tick());
-      TERN_(AUTO_REPORT_SD_STATUS, card.auto_reporter.tick());
+      TERN_(AUTO_REPORT_SD_STATUS, card().auto_reporter.tick());
       TERN_(AUTO_REPORT_POSITION, motion.position_auto_reporter.tick());
       TERN_(BUFFER_MONITORING, queue.auto_report_buffer_statistics());
     }
@@ -1178,6 +1178,10 @@ void setup() {
 
   tmc_standby_setup();  // TMC Low Power Standby pins must be set early or they're not usable
 
+  // LCD pins need their mode set, library assumes they are already
+  exPinMode(DOGLCD_CS, PinMode::OUTPUT);
+  exPinMode(DOGLCD_A0, PinMode::OUTPUT);
+
   // Check startup - does nothing if bootloader sets MCUSR to 0
   const byte mcu = hal.get_reset_source();
   hal.clear_reset_source();
@@ -1377,9 +1381,9 @@ void setup() {
   #endif
 
   #if HAS_MEDIA
-    SETUP_RUN(card.init());           // Prepare for media usage
+    SETUP_RUN(card().init());           // Prepare for media usage
     #if ANY(SDCARD_EEPROM_EMULATION, POWER_LOSS_RECOVERY)
-      SETUP_RUN(card.mount());        // Mount media with settings before first_load
+      SETUP_RUN(card().mount());        // Mount media with settings before first_load
     #endif
   #endif
 
@@ -1685,7 +1689,7 @@ void setup() {
 
   #if HAS_TFT_LVGL_UI
     #if HAS_MEDIA
-      if (!card.isMounted()) SETUP_RUN(card.mount()); // Mount SD to load graphics and fonts
+      if (!card().isMounted()) SETUP_RUN(card().mount()); // Mount SD to load graphics and fonts
     #endif
     SETUP_RUN(tft_lvgl_init());
   #endif
@@ -1757,7 +1761,7 @@ void loop() {
     marlin.idle();
 
     #if HAS_MEDIA
-      if (card.flag.abort_sd_printing) abortSDPrinting();
+      if (card().flag.abort_sd_printing) abortSDPrinting();
       if (marlin.is(MF_SD_COMPLETE)) finishSDPrinting();
     #endif
 

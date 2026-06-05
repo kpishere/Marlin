@@ -34,9 +34,9 @@
  *   <filename>  The filename of the file to delete
  */
 void GcodeSuite::M30() {
-  if (card.isMounted()) {
-    card.closefile();
-    card.removeFile(parser.string_arg);
+  if (card().isMounted()) {
+    card().closefile();
+    card().removeFile(parser.string_arg);
   }
 }
 

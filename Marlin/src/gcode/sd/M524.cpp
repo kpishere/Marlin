@@ -42,10 +42,10 @@ void GcodeSuite::M524() {
 
   #else
 
-    if (card.isStillPrinting())
-      card.abortFilePrintSoon();
-    else if (card.isMounted())
-      card.closefile();
+    if (card().isStillPrinting())
+      card().abortFilePrintSoon();
+    else if (card().isMounted())
+      card().closefile();
 
   #endif
 

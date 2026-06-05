@@ -53,16 +53,16 @@ void GcodeSuite::M28() {
     }
 
     // Binary transfer mode
-    if ((card.flag.binary_mode = binary_mode)) {
+    if ((card().flag.binary_mode = binary_mode)) {
       SERIAL_ECHO_MSG("Switching to Binary Protocol");
-      TERN_(HAS_MULTI_SERIAL, card.transfer_port_index = queue.ring_buffer.command_port().index);
+      TERN_(HAS_MULTI_SERIAL, card().transfer_port_index = queue.ring_buffer.command_port().index);
     }
     else
-      card.openFileWrite(p);
+      card().openFileWrite(p);
 
   #else
 
-    card.openFileWrite(parser.string_arg);
+    card().openFileWrite(parser.string_arg);
 
   #endif
 }
@@ -72,7 +72,7 @@ void GcodeSuite::M28() {
  * (Processed in write-to-file routine)
  */
 void GcodeSuite::M29() {
-  card.flag.saving = false;
+  card().flag.saving = false;
 }
 
 #endif // HAS_MEDIA

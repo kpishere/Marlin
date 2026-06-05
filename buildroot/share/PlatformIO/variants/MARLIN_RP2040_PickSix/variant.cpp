@@ -70,7 +70,9 @@ extern "C" {
 }
 
 #include "drivers/I2C.h"
+#include "cardreader.h"
 
+extern void exPinMode(pin_size_t pin, PinMode mode); 
 
 void initVariant() {
 }

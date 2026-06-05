@@ -445,4 +445,5 @@ public:
 
 #endif // !HAS_MEDIA
 
-extern CardReader card;
+extern CardReader& card();
+

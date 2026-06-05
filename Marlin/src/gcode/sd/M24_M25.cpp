@@ -77,7 +77,7 @@ void GcodeSuite::M24() {
   #endif
 
   #if ENABLED(POWER_LOSS_RECOVERY)
-    if (parser.seenval('S')) card.setIndex(parser.value_long());
+    if (parser.seenval('S')) card().setIndex(parser.value_long());
     if (parser.seenval('T')) print_job_timer.resume(parser.value_long());
   #endif
 
@@ -88,8 +88,8 @@ void GcodeSuite::M24() {
     }
   #endif
 
-  if (card.isFileOpen()) {
-    card.startOrResumeFilePrinting(); // SD card will now be read for commands
+  if (card().isFileOpen()) {
+    card().startOrResumeFilePrinting(); // SD card will now be read for commands
     marlin.startOrResumeJob();        // Start (or resume) the print job timer
     TERN_(POWER_LOSS_RECOVERY, recovery.prepare());
   }
@@ -120,7 +120,7 @@ void GcodeSuite::M25() {
   #else
 
     // Set initial pause flag to prevent more commands from landing in the queue while we try to pause
-    if (card.isStillPrinting()) card.pauseSDPrint();
+    if (card().isStillPrinting()) card().pauseSDPrint();
 
     #if ENABLED(POWER_LOSS_RECOVERY) && DISABLED(DGUS_LCD_UI_MKS)
       if (recovery.enabled) recovery.save(true);

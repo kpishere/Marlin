@@ -88,7 +88,7 @@ void GcodeSuite::M125() {
     park_point += motion.active_hotend_offset();
   #endif
 
-  const bool sd_printing = card.isStillPrinting();
+  const bool sd_printing = card().isStillPrinting();
 
   ui.pause_show_message(PAUSE_MESSAGE_PARKING, PAUSE_MODE_PAUSE_PRINT);
 

@@ -40,18 +40,18 @@
 void GcodeSuite::M27() {
   if (parser.seen_test('C')) {
     SERIAL_ECHOPGM("Current file: ");
-    card.printSelectedFilename();
+    card().printSelectedFilename();
     return;
   }
 
   #if ENABLED(AUTO_REPORT_SD_STATUS)
     if (parser.seenval('S')) {
-      card.auto_reporter.set_interval(parser.value_byte());
+      card().auto_reporter.set_interval(parser.value_byte());
       return;
     }
   #endif
 
-  card.report_status();
+  card().report_status();
 }
 
 #endif // HAS_MEDIA

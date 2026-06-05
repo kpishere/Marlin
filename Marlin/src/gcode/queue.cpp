@@ -411,13 +411,13 @@ inline bool process_line_done(uint8_t &sis, char (&buff)[MAX_CMD_SIZE], int &ind
  */
 void GCodeQueue::get_serial_commands() {
   #if ENABLED(BINARY_FILE_TRANSFER)
-    if (card.flag.binary_mode) {
+    if (card().flag.binary_mode) {
       /**
        * For binary stream file transfer, use serial_line_buffer as the working
        * receive buffer (which limits the packet size to MAX_CMD_SIZE).
        * The receive buffer also limits the packet size for reliable transmission.
        */
-      binaryStream[card.transfer_port_index.index].receive(serial_state[card.transfer_port_index.index].line_buffer);
+      binaryStream[card().transfer_port_index.index].receive(serial_state[card().transfer_port_index.index].line_buffer);
       return;
     }
   #endif
@@ -510,7 +510,7 @@ void GCodeQueue::get_serial_commands() {
         }
         #if HAS_MEDIA
           // Pronterface "M29" and "M29 " has no line number
-          else if (card.flag.saving && !is_M29(command)) {
+          else if (card().flag.saving && !is_M29(command)) {
             gcode_line_error(F(STR_ERR_NO_CHECKSUM), p);
             break;
           }
@@ -568,12 +568,12 @@ void GCodeQueue::get_serial_commands() {
     static uint8_t sd_input_state = PS_NORMAL;
 
     // Get commands if there are more in the file
-    if (!card.isStillFetching()) return;
+    if (!card().isStillFetching()) return;
 
     int sd_count = 0;
-    while (!ring_buffer.full() && !card.eof()) {
-      const int16_t n = card.get();
-      const bool card_eof = card.eof();
+    while (!ring_buffer.full() && !card().eof()) {
+      const int16_t n = card().get();
+      const bool card_eof = card().eof();
       if (n < 0 && !card_eof) { SERIAL_ERROR_MSG(STR_SD_ERR_READ); continue; }
 
       CommandLine &command = ring_buffer.commands[ring_buffer.index_w];
@@ -592,17 +592,17 @@ void GCodeQueue::get_serial_commands() {
             // When M25 is non-blocking it can still suspend SD commands
             // Otherwise the M125 handler needs to know SD printing is active
             if (command.buffer[0] == 'M' && command.buffer[1] == '2' && command.buffer[2] == '5' && !NUMERIC(command.buffer[3]))
-              card.pauseSDPrint();
+              card().pauseSDPrint();
           #endif
 
           // Put the new command into the buffer (no "ok" sent)
           ring_buffer.commit_command(true);
 
           // Prime Power-Loss Recovery for the NEXT commit_command
-          TERN_(POWER_LOSS_RECOVERY, recovery.cmd_sdpos = card.getIndex());
+          TERN_(POWER_LOSS_RECOVERY, recovery.cmd_sdpos = card().getIndex());
         }
 
-        if (card.eof()) card.fileHasFinished();         // Handle end of file reached
+        if (card().eof()) card().fileHasFinished();         // Handle end of file reached
       }
       else
         process_stream_char(sd_char, sd_input_state, command.buffer, sd_count);
@@ -663,11 +663,11 @@ void GCodeQueue::advance() {
 
   #if HAS_MEDIA
 
-    if (card.flag.saving) {
+    if (card().flag.saving) {
       char * const cmd = ring_buffer.peek_next_command_string();
       if (is_M29(cmd)) {
         // M29 closes the file
-        card.closefile();
+        card().closefile();
         SERIAL_ECHOLNPGM(STR_FILE_SAVED);
 
         #if !defined(__AVR__) || !defined(USBCON)
@@ -683,8 +683,8 @@ void GCodeQueue::advance() {
       }
       else {
         // Write the string from the read buffer to SD
-        card.write_command(cmd);
-        if (card.flag.logging)
+        card().write_command(cmd);
+        if (card().flag.logging)
           gcode.process_next_command(); // The card is saving because it's logging
         else
           ok_to_send();

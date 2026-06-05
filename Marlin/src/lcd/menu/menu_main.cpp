@@ -248,8 +248,8 @@ void menu_configuration();
 void menu_main() {
   const bool busy = marlin.printingIsActive();
   #if HAS_MEDIA
-    const bool card_is_mounted = card.isMounted(),
-               card_open = card_is_mounted && card.isFileOpen();
+    const bool card_is_mounted = card().isMounted(),
+               card_open = card_is_mounted && card().isFileOpen();
   #endif
 
   START_MENU();
@@ -321,10 +321,10 @@ void menu_main() {
       if (card_is_mounted) {
         #if ENABLED(MENU_ADDAUTOSTART)
           // [Run AutoFiles] for mounted drive(s)
-          if (card.isSDCardMounted())
-            ACTION_ITEM(MSG_RUN_AUTOFILES_SD, card.autofile_begin);
-          if (card.isFlashDriveMounted())
-            ACTION_ITEM(MSG_RUN_AUTOFILES_USB, card.autofile_begin);
+          if (card().isSDCardMounted())
+            ACTION_ITEM(MSG_RUN_AUTOFILES_SD, card().autofile_begin);
+          if (card().isFlashDriveMounted())
+            ACTION_ITEM(MSG_RUN_AUTOFILES_USB, card().autofile_begin);
         #endif
 
         #if ENABLED(TFT_COLOR_UI)
@@ -339,35 +339,35 @@ void menu_main() {
         #endif
 
         // [Release Media] for mounted drive(s)
-        if (card.isSDCardMounted())
+        if (card().isSDCardMounted())
           M22_ITEM(MSG_RELEASE_SD);
-        if (card.isFlashDriveMounted())
+        if (card().isFlashDriveMounted())
           M22_ITEM(MSG_RELEASE_USB);
 
         // [Select from SD/USB] (or Password First)
-        if (card.isSDCardMounted())
+        if (card().isSDCardMounted())
           SUBMENU(MSG_MEDIA_MENU_SD, MEDIA_MENU_GATEWAY);
-        else if (TERN0(SHOW_UNMOUNTED_DRIVES, card.isSDCardInserted()))
+        else if (TERN0(SHOW_UNMOUNTED_DRIVES, card().isSDCardInserted()))
           SUBMENU(MSG_MEDIA_MENU_SD, MEDIA_MENU_GATEWAY_SD);
 
-        if (card.isFlashDriveMounted())
+        if (card().isFlashDriveMounted())
           SUBMENU(MSG_MEDIA_MENU_USB, MEDIA_MENU_GATEWAY);
-        else if (TERN0(SHOW_UNMOUNTED_DRIVES, card.isFlashDriveInserted()))
+        else if (TERN0(SHOW_UNMOUNTED_DRIVES, card().isFlashDriveInserted()))
           SUBMENU(MSG_MEDIA_MENU_USB, MEDIA_MENU_GATEWAY_USB);
       }
       else {
         // NOTE: If the SD Card has no SD_DETECT it will always appear to be "inserted"
-        const bool att_sd  = ENABLED(ATTACH_WITHOUT_INSERT_SD)  || card.isSDCardInserted(),
-                   att_usb = ENABLED(ATTACH_WITHOUT_INSERT_USB) || card.isFlashDriveInserted();
+        const bool att_sd  = ENABLED(ATTACH_WITHOUT_INSERT_SD)  || card().isSDCardInserted(),
+                   att_usb = ENABLED(ATTACH_WITHOUT_INSERT_USB) || card().isFlashDriveInserted();
         if (!att_sd && !att_usb) {
           ACTION_ITEM(MSG_NO_MEDIA, nullptr);                 // [No Media]
         }
         else {
           #if ENABLED(SHOW_UNMOUNTED_DRIVES)
             // [Select from SD/USB] (or Password First)
-            if (card.isSDCardInserted())
+            if (card().isSDCardInserted())
               SUBMENU(MSG_MEDIA_MENU_SD, MEDIA_MENU_GATEWAY_SD);
-            if (card.isFlashDriveInserted())
+            if (card().isFlashDriveInserted())
               SUBMENU(MSG_MEDIA_MENU_USB, MEDIA_MENU_GATEWAY_USB);
           #else
             #define M21(T) F("M21" TERN_(HAS_MULTI_VOLUME, T))

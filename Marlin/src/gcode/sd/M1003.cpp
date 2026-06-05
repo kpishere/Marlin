@@ -31,6 +31,6 @@
  * M1003: Set the current dir to /. Should come after 'M24'.
  *        Prevents the SD menu getting stuck in the newest file's workDir.
  */
-void GcodeSuite::M1003() { card.cdroot(); }
+void GcodeSuite::M1003() { card().cdroot(); }
 
 #endif // ONE_CLICK_PRINT

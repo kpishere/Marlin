@@ -38,18 +38,18 @@ void GcodeSuite::M21() {
   #if HAS_MULTI_VOLUME
     const int8_t vol = parser.intval('P', -1);
     if (vol == 0 || parser.seen_test('S'))       // "S" for SD Card
-      card.selectMediaSDCard();
+      card().selectMediaSDCard();
     else if (vol == 1 || parser.seen_test('U'))  // "U" for USB
-      card.selectMediaFlashDrive();
+      card().selectMediaFlashDrive();
   #endif
-  card.mount();
+  card().mount();
 }
 
 /**
  * M22: Release Media
  */
 void GcodeSuite::M22() {
-  if (!card.isStillPrinting()) card.release();
+  if (!card().isStillPrinting()) card().release();
 }
 
 #endif // HAS_MEDIA

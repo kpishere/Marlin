@@ -437,9 +437,9 @@ bool pause_print(const float retract, const xyz_pos_t &park_point, const bool sh
 
   // Pause the print job and timer
   #if HAS_MEDIA
-    const bool was_sd_printing = card.isStillPrinting();
+    const bool was_sd_printing = card().isStillPrinting();
     if (was_sd_printing) {
-      card.pauseSDPrint();
+      card().pauseSDPrint();
       ++did_pause_print; // Indicate SD pause also
     }
   #endif
@@ -756,7 +756,7 @@ void resume_print(
   #if HAS_MEDIA
     if (did_pause_print) {
       --did_pause_print;
-      card.startOrResumeFilePrinting();
+      card().startOrResumeFilePrinting();
       // Write PLR now to update the z axis value
       TERN_(POWER_LOSS_RECOVERY, if (recovery.enabled) recovery.save(true));
     }

@@ -32,7 +32,7 @@
 #include "../../sd/cardreader.h"
 
 void lcd_sd_updir() {
-  ui.encoderPosition = card.cdup() ? ENCODER_STEPS_PER_MENU_ITEM : 0;
+  ui.encoderPosition = card().cdup() ? ENCODER_STEPS_PER_MENU_ITEM : 0;
   encoderTopLine = 0;
   ui.screen_changed = true;
   ui.refresh();
@@ -53,7 +53,7 @@ void lcd_sd_updir() {
 #endif
 
 inline void sdcard_start_selected_file() {
-  card.openAndPrintFile(card.filename);
+  card().openAndPrintFile(card().filename);
   ui.return_to_status();
   ui.reset_status();
 }
@@ -72,7 +72,7 @@ class MenuItem_sdfile : public MenuItem_sdbase {
       #endif
       #if ENABLED(SD_MENU_CONFIRM_START)
         MenuItem_submenu::action(fstr, []{
-          char * const filename = card.longest_filename();
+          char * const filename = card().longest_filename();
           MenuItem_confirm::select_screen(
             GET_TEXT_F(MSG_BUTTON_PRINT), GET_TEXT_F(MSG_BUTTON_CANCEL),
             sdcard_start_selected_file, nullptr,
@@ -92,9 +92,9 @@ class MenuItem_sdfolder : public MenuItem_sdbase {
       MenuItem_sdbase::draw(sel, row, fstr, theCard, true);
     }
     static void action(FSTR_P const, CardReader &theCard) {
-      card.cd(theCard.filename);
+      card().cd(theCard.filename);
       encoderTopLine = 0;
-      ui.encoderPosition = (card.get_num_items() ? 2 : 1) * (ENCODER_STEPS_PER_MENU_ITEM);
+      ui.encoderPosition = (card().get_num_items() ? 2 : 1) * (ENCODER_STEPS_PER_MENU_ITEM);
       ui.screen_changed = true;
       TERN_(HAS_MARLINUI_U8GLIB, ui.drawing_screen = false);
       ui.refresh();
@@ -106,20 +106,20 @@ class MenuItem_sdfolder : public MenuItem_sdbase {
 //
 
 void menu_file_selector_sd() {
-  if (!card.isSDCardSelected()) {
-    card.release();
-    card.selectMediaSDCard();
+  if (!card().isSDCardSelected()) {
+    card().release();
+    card().selectMediaSDCard();
   }
-  if (!card.isSDCardMounted()) card.mount();
+  if (!card().isSDCardMounted()) card().mount();
   ui.goto_screen(menu_file_selector);
 }
 
 void menu_file_selector_usb() {
-  if (!card.isFlashDriveSelected()) {
-    card.release();
-    card.selectMediaFlashDrive();
+  if (!card().isFlashDriveSelected()) {
+    card().release();
+    card().selectMediaFlashDrive();
   }
-  if (!card.isFlashDriveMounted()) card.mount();
+  if (!card().isFlashDriveMounted()) card().mount();
   ui.goto_screen(menu_file_selector);
 }
 
@@ -128,21 +128,21 @@ void menu_file_selector() {
 
   #if HAS_MARLINUI_U8GLIB
     static int16_t fileCnt;
-    if (ui.first_page) fileCnt = card.get_num_items();
+    if (ui.first_page) fileCnt = card().get_num_items();
   #else
-    const int16_t fileCnt = card.get_num_items();
+    const int16_t fileCnt = card().get_num_items();
   #endif
 
   START_MENU();
 
   BACK_ITEM_F(TERN1(BROWSE_MEDIA_ON_INSERT, screen_history_depth) ? GET_TEXT_F(MSG_MAIN_MENU) : GET_TEXT_F(MSG_BACK));
 
-  if (card.flag.workDirIsRoot) {
+  if (card().flag.workDirIsRoot) {
     #if !HAS_SD_DETECT
-      ACTION_ITEM(MSG_REFRESH, []{ encoderTopLine = 0; card.mount(); });
+      ACTION_ITEM(MSG_REFRESH, []{ encoderTopLine = 0; card().mount(); });
     #endif
   }
-  else if (card.isMounted())
+  else if (card().isMounted())
     ACTION_ITEM_F(F(LCD_STR_FOLDER " .."), lcd_sd_updir);
 
   if (ui.should_draw()) {
@@ -150,11 +150,11 @@ void menu_file_selector() {
       if (_menuLineNr != _thisItemNr)
         SKIP_ITEM();
       else {
-        card.selectFileByIndexSorted(i);
-        if (card.flag.filenameIsDir)
-          MENU_ITEM(sdfolder, MSG_MEDIA_MENU, card);
+        card().selectFileByIndexSorted(i);
+        if (card().flag.filenameIsDir)
+          MENU_ITEM(sdfolder, MSG_MEDIA_MENU, card());
         else
-          MENU_ITEM(sdfile, MSG_MEDIA_MENU, card);
+          MENU_ITEM(sdfile, MSG_MEDIA_MENU, card());
       }
     }
   }

@@ -1615,8 +1615,8 @@ uint8_t expand_u8str_P(char * const outstr, PGM_P const ptpl, const int8_t ind, 
     if (marlin.printingIsPaused())
       msg = GET_TEXT_F(MSG_PRINT_PAUSED);
     #if HAS_MEDIA
-      else if (card.isStillPrinting())
-        return set_status_no_expire(card.longest_filename());
+      else if (card().isStillPrinting())
+        return set_status_no_expire(card().longest_filename());
     #endif
     else if (print_job_timer.isRunning())
       msg = GET_TEXT_F(MSG_PRINTING);
@@ -1814,10 +1814,10 @@ uint8_t expand_u8str_P(char * const outstr, PGM_P const ptpl, const int8_t ind, 
   void MarlinUI::abort_print() {
     #if HAS_MEDIA
       marlin.end_waiting();
-      if (card.isStillPrinting())
-        card.abortFilePrintSoon();
-      else if (card.isMounted())
-        card.closefile();
+      if (card().isStillPrinting())
+        card().abortFilePrintSoon();
+      else if (card().isMounted())
+        card().closefile();
     #endif
     #ifdef ACTION_ON_CANCEL
       hostui.cancel();
@@ -1881,7 +1881,7 @@ uint8_t expand_u8str_P(char * const outstr, PGM_P const ptpl, const int8_t ind, 
   void MarlinUI::resume_print() {
     reset_status();
     TERN_(PARK_HEAD_ON_PAUSE, marlin.end_waiting());
-    TERN_(HAS_MEDIA, if (card.isPaused()) queue.inject_P(M24_STR));
+    TERN_(HAS_MEDIA, if (card().isPaused()) queue.inject_P(M24_STR));
     #ifdef ACTION_ON_RESUME
       hostui.resume();
     #endif
@@ -1927,7 +1927,7 @@ uint8_t expand_u8str_P(char * const outstr, PGM_P const ptpl, const int8_t ind, 
     return (
       TERN0(SET_PROGRESS_PERCENT, (progress_override & PROGRESS_MASK))
       #if HAS_MEDIA
-        ?: TERN(HAS_PRINT_PROGRESS_PERMYRIAD, card.permyriadDone(), card.percentDone())
+        ?: TERN(HAS_PRINT_PROGRESS_PERMYRIAD, card().permyriadDone(), card().percentDone())
       #endif
     );
   }
@@ -1985,9 +1985,9 @@ uint8_t expand_u8str_P(char * const outstr, PGM_P const ptpl, const int8_t ind, 
 
         #else
 
-          if (card.isSDCardSelected())
+          if (card().isSDCardSelected())
             LCD_MESSAGE(MSG_MEDIA_INSERTED_SD);
-          else if (card.isFlashDriveSelected())
+          else if (card().isFlashDriveSelected())
             LCD_MESSAGE(MSG_MEDIA_INSERTED_USB);
           else
             LCD_MESSAGE(MSG_MEDIA_INSERTED);

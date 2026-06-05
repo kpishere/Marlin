@@ -74,7 +74,10 @@ PGMSTR(M23_STR, "M23 %s");
 PGMSTR(M24_STR, "M24");
 
 // Functional instance. Stub instance maintained in MarlinCore.cpp.
-CardReader card;
+CardReader& card() { 
+  static CardReader card;
+  return card;
+};
 
 // public:
 
