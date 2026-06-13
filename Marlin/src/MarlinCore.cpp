@@ -1178,10 +1178,6 @@ void setup() {
 
   tmc_standby_setup();  // TMC Low Power Standby pins must be set early or they're not usable
 
-  // LCD pins need their mode set, library assumes they are already
-  exPinMode(DOGLCD_CS, PinMode::OUTPUT);
-  exPinMode(DOGLCD_A0, PinMode::OUTPUT);
-
   // Check startup - does nothing if bootloader sets MCUSR to 0
   const byte mcu = hal.get_reset_source();
   hal.clear_reset_source();

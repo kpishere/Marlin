@@ -170,6 +170,7 @@ void MarlinHAL::init() {
   UNUSED(cpuFreq);
 
   #if HAS_MEDIA && DISABLED(ONBOARD_SDIO) && PIN_EXISTS(SD_SS)
+    exPinMode(SD_SS_PIN, PinMode::OUTPUT);
     OUT_WRITE(SD_SS_PIN, HIGH); // Try to set SD_SS_PIN inactive before any other SPI users start up
   #endif
 
